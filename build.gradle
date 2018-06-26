@@ -21,7 +21,7 @@ allprojects {
         maven {
             url "http://repository.sentiance.com"
         }
-       google()
+        google()
     }
 }
 

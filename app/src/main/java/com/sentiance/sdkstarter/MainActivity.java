@@ -31,14 +31,18 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private ListView statusList;
+    private boolean permCheckPostponed;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // We need to ask the user to grant permission. We've offloaded that to a different activity for clarity.
-            startActivity(new Intent(this, PermissionCheckActivity.class));
+        if (new Cache(this).getUserId() == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            permCheckPostponed = true;
+        }
+        else {
+            permCheck();
         }
 
         setContentView(R.layout.activity_main);
@@ -46,13 +50,23 @@ public class MainActivity extends AppCompatActivity {
         statusList = (ListView)findViewById(R.id.statusList);
     }
 
+    private void permCheck() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            startActivity(new Intent(this, PermissionCheckActivity.class));
+        }
+    }
+
     @Override
     protected void onResume () {
         super.onResume();
 
-        // Register a receiver so we are notified by MyApplication when the Sentiance SDK status was updated.
-        LocalBroadcastManager.getInstance(this).registerReceiver(statusUpdateReceiver, new IntentFilter(MyApplication.ACTION_SENTIANCE_STATUS_UPDATE));
+        if (!permCheckPostponed) {
+            permCheck();
+        }
+        permCheckPostponed = false;
 
+        // Register a receiver so we are notified by MyApplication when the Sentiance SDK status was updated.
+        LocalBroadcastManager.getInstance(this).registerReceiver(statusUpdateReceiver, new IntentFilter(SentianceWrapper.ACTION_SDK_STATUS_UPDATED));
         refreshStatus();
     }
 
