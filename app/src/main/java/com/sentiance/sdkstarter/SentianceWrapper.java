@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -83,7 +84,7 @@ public class SentianceWrapper implements MetaUserLinker, OnSdkStatusUpdateHandle
     }
 
     @Override
-    public void onInitFailure (OnInitCallback.InitIssue initIssue) {
+    public void onInitFailure (OnInitCallback.InitIssue initIssue, @Nullable Throwable throwable) {
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_INIT_FAILED));
         Log.e(TAG, "Could not initialize SDK: " + initIssue);
 
@@ -99,6 +100,9 @@ public class SentianceWrapper implements MetaUserLinker, OnSdkStatusUpdateHandle
                 break;
             case LINK_FAILED:
                 Log.e(TAG, "An issue was encountered trying to link the installation ID to the metauser.");
+                break;
+            case INITIALIZATION_ERROR:
+                Log.e(TAG, "An unexpected exception or an error occurred during initialization.", throwable);
                 break;
         }
     }
