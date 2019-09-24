@@ -2,7 +2,8 @@ package com.sentiance.sdkstarter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 class Cache {
     private static final String PREF_NAME = "app";

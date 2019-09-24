@@ -6,14 +6,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -78,6 +79,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private class LoginTask extends AsyncTask<Void, Void, Boolean> {
 
+        String extId = "";
+
+        @Override
+        protected void onPreExecute () {
+            extId = externalId.getText().toString();
+        }
+
         @Override
         protected Boolean doInBackground (Void... voids) {
             String secret = null;
@@ -93,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Cache cache = new Cache(LoginActivity.this);
 
                 // Save the user id so we can initialize the Sentiance SDK.
-                cache.setUserId(externalId.getText().toString());
+                cache.setUserId(extId);
 
                 // Save the app secret. This example stores the secret as is. In your
                 // own app, make sure the secret is stored in a secure manner (e.g.
